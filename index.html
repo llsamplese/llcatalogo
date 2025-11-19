@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>LL Samples - Catálogo Interativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    /* Reset básico */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Paleta de Cores:
+       Amarelo Principal (menos alaranjado, um pouco mais escuro que #FFD700): #FFC107 (Amber)
+       Amarelo para detalhes/highlights: #FFD700 (Gold)
+       Preto Principal: #212121 (Dark Grey, quase preto)
+       Preto para fundo/elementos mais escuros: #000000 (Black)
+       Cinza para texto secundário: #B0BEC5 (Light Blue Grey) ou #757575 (Grey)
+    */
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #FFD700; /* Fundo amarelo sólido */
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .header {
+        background: #212121; /* Fundo preto para o cabeçalho */
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5); /* Sombra mais escura */
+        margin-bottom: 30px;
+        text-align: center;
+        color: white; /* Texto branco */
+    }
+
+    .logo {
+        height: 60px;
+        margin-bottom: 15px;
+    }
+
+    .header h1 {
+        color: #FFC107; /* Amarelo principal para o título */
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    .header p {
+        color: #B0BEC5; /* Cinza claro para o texto secundário */
+        font-size: 1.1em;
+    }
+
+    .search-filter {
+        background: #212121; /* Fundo preto para a busca/filtro */
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4); /* Sombra mais escura */
+    }
+
+    .search-box {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .search-box input {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px 20px;
+        border: 2px solid #424242; /* Borda cinza escuro */
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: #424242; /* Fundo do input cinza escuro */
+        color: white; /* Texto branco no input */
+        transition: all 0.3s;
+    }
+
+    .search-box input::placeholder {
+        color: #B0BEC5; /* Placeholder cinza claro */
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: #FFC107; /* Borda amarela no foco */
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3); /* Sombra amarela */
+    }
+
+    .filter-tags {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        padding: 8px 16px;
+        background: #424242; /* Fundo cinza escuro para tags */
+        border: 2px solid #616161; /* Borda um pouco mais clara */
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 600;
+        font-size: 14px;
+        color: white; /* Texto branco */
+    }
+
+    .tag:hover {
+        background: #616161; /* Cinza um pouco mais claro no hover */
+        transform: translateY(-2px);
+    }
+
+    .tag.active {
+        background: #FFC107; /* Amarelo principal para tag ativa */
+        color: #212121; /* Texto preto */
+        border-color: #FFC107;
+    }
+
+    .cart-summary {
+        background: white; /* Fundo branco para o carrinho */
+        color: #212121; /* Texto preto padrão para o carrinho */
+        padding: 20px 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Sombra mais suave para o branco */
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+    }
+
+    .cart-info {
+        font-size: 18px;
+        font-weight: 600;
+        color: #212121; /* Texto da quantidade de samples em preto */
+    }
+
+    .cart-total {
+        font-size: 24px;
+        font-weight: 800;
+        color: #212121; /* Amarelo principal para o total */
+    }
+
+    .cart-actions-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    /* Estilos para os botões do carrinho */
+    .btn-finalizar, .btn-copy-names, .btn-select-all, .btn-clear-all {
+        padding: 12px 30px;
+        background: #FFC107; /* Amarelo principal para o fundo */
+        color: #212121; /* Texto preto */
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 16px;
+    }
+
+    .btn-finalizar:hover, .btn-copy-names:hover, .btn-select-all:hover, .btn-clear-all:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3); /* Sombra mais suave */
+        filter: brightness(1.05); /* Leve brilho no hover */
+    }
+
+    .btn-copy-names {
+        background: #FFD700; /* Amarelo mais claro para copiar nomes */
+        color: #212121;
+    }
+
+    .btn-select-all {
+        background: #FFC107; /* Amarelo principal */
+        color: #212121; /* Texto preto */
+    }
+
+    .btn-clear-all {
+        background: #424242; /* Cinza escuro para limpar tudo */
+        color: white; /* Texto branco */
+    }
+
+    .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+    }
+
+    .sample-card {
+        background: #212121; /* Fundo preto para os cards */
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        transition: all 0.3s;
+        position: relative;
+    }
+
+    .sample-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    }
+
+    .sample-card.selected {
+        border: 3px solid #FFC107; /* Borda amarela para selecionado */
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3); /* Sombra amarela */
+    }
+
+    .video-thumbnail {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        background: #424242; /* Fundo cinza escuro para thumbnail padrão */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .video-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .video-thumbnail.no-video {
+        background: #000000; /* Preto puro para sem vídeo */
+    }
+
+    .play-icon {
+        font-size: 60px;
+        color: #FFD700; /* Ícone de play amarelo */
+        position: absolute;
+        z-index: 10;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        pointer-events: none;
+    }
+
+    .card-content {
+        padding: 20px;
+    }
+
+    .sample-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: white; /* Texto branco para o nome do sample */
+        margin-bottom: 10px;
+    }
+
+    .sample-price {
+        font-size: 24px;
+        font-weight: 800;
+        color: #FFC107; /* Amarelo principal para o preço */
+        margin-bottom: 15px;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-select {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 15px;
+    }
+
+    .btn-select.add {
+        background: #FFC107; /* Amarelo principal para adicionar */
+        color: #212121; /* Texto preto */
+    }
+
+    .btn-select.remove {
+        background: #424242; /* Cinza escuro para remover */
+        color: white; /* Texto branco */
+    }
+
+    .btn-select:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        filter: brightness(1.1);
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #212121; /* Texto preto para "nenhum resultado" no fundo amarelo */
+        font-size: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .catalog-grid {
+            grid-template-columns: 1fr;
+        }
+        .header h1 {
+            font-size: 2em;
+        }
+        .cart-summary {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        .cart-actions-group {
+            justify-content: center;
+        }
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        background: #FFC107; /* Amarelo principal para o badge */
+        color: #212121; /* Texto preto */
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-left: 10px;
+    }
+</style>
+
+
+
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="https://raw.githubusercontent.com/ciliocavalcante-design/imagesll/2f3f0447d9d7afa76f017257d899151e0b7468bb/Layer%205.png" alt="LL Samples" class="logo">
+        <h1>🎹 Catálogo LL Samples</h1>
+        <p>Explore nossos samples profissionais e monte seu pacote</p>
+    </div>
+    <div class="search-filter">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar samples... (ex: Drums, Forró, Piseiro)">
+        </div>
+        <div class="filter-tags">
+            <div class="tag active" data-filter="all">Todos</div>
+            <div class="tag" data-filter="drums">Drums</div>
+            <div class="tag" data-filter="guitarra">Guitarra</div>
+            <div class="tag" data-filter="bass">Bass</div>
+            <div class="tag" data-filter="acordeon">Acordeon</div>
+            <div class="tag" data-filter="violao">Violão</div>
+            <div class="tag" data-filter="pacote">Pacotes</div>
+        </div>
+    </div>
+    <div class="cart-summary" id="cartSummary" style="display:none;">
+        <div>
+            <span class="cart-info" id="cartInfo">0 samples selecionados</span>
+        </div>
+        <div class="cart-total" id="cartTotal">R$ 0,00</div>
+        <div class="cart-actions-group"> <!-- Grupo para os botões -->
+            <button class="btn-select-all" onclick="selectAllSamples()">➕ Selecionar Todos</button>
+            <button class="btn-clear-all" onclick="clearAllSamples()">➖ Limpar Tudo</button>
+            <button class="btn-finalizar" onclick="finalizarSelecao()">✅ Finalizar Seleção</button>
+            <button class="btn-copy-names" onclick="copiarNomesSamples()">📋 Copiar Nomes</button>
+        </div>
+    </div>
+    <div class="catalog-grid" id="catalogGrid">
+        <!-- Cards serão inseridos aqui -->
+    </div>
+</div>
+<script>
+    // Função para remover acentos (já existente, mas crucial para a busca e correspondência de vídeos)
+    function removerAcentos(texto) {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    // Função para padronizar termos de versão (já existente, mas crucial para a busca e correspondência de vídeos)
+    function padronizarVersao(texto) {
+        let padronizado = texto.toLowerCase();
+        // Converte "vX" para "X.0" (ex: "v2" -> "2.0")
+        padronizado = padronizado.replace(/v(\d+(\.\d+)?)/g, (match, p1) => {
+            if (!p1.includes('.')) {
+                return `${p1}.0`;
+            }
+            return p1;
+        });
+        // Converte "X.0" para "vX" (ex: "3.0" -> "v3")
+        padronizado = padronizado.replace(/(\d+)\.0/g, (match, p1) => `v${p1}`);
+        return padronizado;
+    }
+
+    // Função auxiliar para normalizar nomes para comparação (acentos e versões)
+    function normalizeForComparison(name) {
+        return padronizarVersao(removerAcentos(name)).toLowerCase();
+    }
+
+    // NOVO: Lista de vídeos fornecida
+    const videosList = {
+        "LL Metais": "https://youtu.be/KuUTx8NzAr4?si=lbaaAjGnjUO9IpJc",
+        "LL Sax v1.5": "https://youtu.be/YotFGV5IQl8?si=4ahVjkVZTQeqbfmK",
+        "LL Piseiro Drums v1": "https://youtu.be/OnQKHjpjvaQ?si=hbo9pwX4DWucZPSb",
+        "LL Bass Piseiro v1": "https://youtu.be/5K1IOqGaP6g?si=PYO9vBxuCGhiZkbR",
+        "LL WS Drums": "https://youtu.be/8onKDOVKCxE?si=HcoB1ZkR_9_UjRS5",
+        "LL Guitarra Piseiro v1": "https://youtu.be/rUvw79orXZg?si=q4JE8l1OrC4MuXQy",
+        "LL Acordeon Piseiro": "https://youtu.be/wzNRhtxSIx0?si=yjudaYtzgVWlj7r6",
+        "LL Percussao Piseiro": "https://youtu.be/I2Tu68topUU?si=IfW2expvkG41K0Po",
+        "LL Bregadeira Drums": "https://youtu.be/IJNOLjdF_8o?si=BN-dy24wlx2L5giT",
+        "LL Guitarra Bregadeira": "https://youtu.be/93LWdjfAIfg?si=oIe6KFojIkQZO8XR",
+        "LL Pé de Serra Drums": "https://youtu.be/LAh_N1dgdRI?si=kq3wqwhPs1NU1GKO",
+        "LL Acordeon Pé-de-Serra": "https://youtu.be/3h8xR4OmtH8?si=HDDBViN52uia_s6e",
+        "LL Piseiro Drums v1.5": "https://youtu.be/6z0aRqURc4w?si=ZAI68b_qdnK2m7LA",
+        "LL Metais v2": "https://youtu.be/RArd9zPafhQ?si=RxUhCsSuN9dj6kwk",
+        "LL Piseiro Drums Summer": "https://youtu.be/iasVX_hPkS4?si=zFEf5FSzaeUu3yoV",
+        "LL Acordeon Piseiro v2": "https://youtu.be/v5kv8za6-90?si=F6QpoqKaEO-KHMO2",
+        "LL Arrocha Drums": "https://youtu.be/1C1FO1tHJyI?si=Sy9HazkMIzN6B5-2",
+        "LL Guitarra Arrocha": "https://youtu.be/TUUs3lmy3Y0?si=XZPMvAvAMJP9_wvs",
+        "LL Bass Arrocha": "https://youtu.be/7RV6pSg8waQ?si=bwoG2HBWWmoz64wL",
+        "LL Arrocha Percussão": "https://youtu.be/sOzFZulOUHQ?si=AFt8hQGvev1l01iS",
+        "LL Cavaco Prime": "https://youtu.be/eIi__vQi14Q?si=-v1QjTikaAzMnNva",
+        "LL Guitarra Distorção": "https://youtu.be/ODTTJ7ZLjco?si=ZQcrh1wl9ZikOA77",
+        "LL Arrasta-Pé Drums v1.5": "https://youtu.be/nke0JEdT8YA?si=pSY3Z1FoEqM6-z8N",
+        "LL Violão Arrocha v1.5": "https://youtu.be/SB7_pE15rbw?si=jISOG-WijwKaN1JT",
+        "LL Guitarra Arrasta-Pé": "https://youtu.be/gCT1ernB7DI?si=2StyUzrHWL86OCtd",
+        "LL Bass Arrasta-Pé": "https://youtu.be/0nPWAixsqhg?si=fob55xx8SAigoZiT",
+        "LL Forró Romântico Drums": "https://youtu.be/9bKunDA2A88?si=FOKFisqdS6SUo8te",
+        "LL Metais v3": "https://youtu.be/S0CqRq9a4TI?si=x_XKZCWPNa0P3__1",
+        "LL Iguinho e Lulinha Drums": "https://youtu.be/Sv2qJHQ0l-o?si=kjFKeJZelf_YbjBy",
+        "LL Violão Vaneira": "https://youtu.be/y50aOUzONBU?si=jzjUAtO2S5pVPZdf",
+        "LL Pagode Drums e Percussion": "https://youtu.be/EHIwzcjL318?si=lI-5AlsOrgdU3BHn",
+        "LL Guitarra Piseiro v3": "https://youtu.be/uJG_RXyoeP4?si=UquVv9MGLk8m6rcZ",
+        "LL Bass Piseiro v2": "https://youtu.be/OcT97fnfB5M?si=L1JG-J7piPKxEdgq",
+        "LL Drums Mari Fernandez": "https://youtu.be/BwIcLysROfM?si=1wk7wUq1fccgpRva",
+        "LL Drums Zé Felipe": "https://youtu.be/d10c7aQLPgM?si=8O2SNR05q4-jhNvA",
+        "LL Drums Felipe Amorim": "https://youtu.be/iLb__-DAIO4?si=L7NsgoxhYTnqSev5",
+        "LL Guitarra Calypso": "https://youtu.be/-dCxO11hSgc?si=lFhQdf2DKN2p91DH",
+        "LL Acordeon Arrocha": "https://youtu.be/mO0MaAN0Uqg?si=LBGc3mUFK-6uR2Bw",
+        "LL Violão Pop v1": "https://youtu.be/nuG8_3bNz8w?si=cOG3BcY11sIK0xEy",
+        "LL Vaneira Drums": "https://youtu.be/0DVtxwdI8t0?si=e86hWI8i5BfqHtUO",
+        "LL Drums Manu Bahtidão": "https://youtu.be/FTg5oa1VHXU?si=ppkYm9OTD7LfU9iN",
+        "LL Violão Pagode e Samba": "https://youtu.be/dl40SSHThfg?si=yIaLKSAEyd5aKKQB",
+        "LL Acordeon Vaneira": "https://youtu.be/NQ6KcXt1OXc?si=gJi4RsHg7QH576bm",
+        "LL Cavaco Prime v2": "https://youtu.be/jN1uVwx0B88?si=LGZxUbdDudA6rrVr",
+        "LL Axé Rythm v2": "https://youtu.be/AUXgiprtqhA?si=XhG7ITJLwblC_7nF",
+        "LL Bass Axé": "https://youtu.be/bO-R5UNPgmY?si=4d5CmBYOEIrPnbBV",
+        "LL Guitarra Axé v2": "https://youtu.be/NU6ewsQQaaY?si=glnHb9jepQEISCvm",
+        "LL Pagodão Rythm v2": "https://youtu.be/h0BoTh6bUBQ?si=PsUqKrSxQ8yqDZ_V",
+        "LL Guitarra Pagodão v2": "https://youtu.be/oMSuwiTPuKw?si=VCkhC7WR0Oa6AsjF",
+        "LL Bass Pagodão": "https://youtu.be/u4ZRQfkwU8Q?si=6oqNIEVAAoZ5aw7",
+        "LL Guitarra Forrozao": "https://youtu.be/czN2vM06eqM?si=1FzGrgYj5dMwz_U5",
+        "LL Bass Forrozao": "https://youtu.be/IEPn3MSkjJI?si=saLm4IQzeljGZNlb",
+        "LL Bass Pagode": "https://youtu.be/Egn7F4w9ziQ?si=7PYeXL3GtEIbx5TR",
+        "LL Violão Pop v2": "https://youtu.be/jWlLr_bRMCM?si=agB7sYHkC7IdF7ml",
+        "LL Acordeon Arrasta-Pé": "https://youtu.be/0gKTeQ0OJj0?si=kw9slO03p-DBL5K8",
+        "LL Strings": "https://youtu.be/V5zqi4J0sWc?si=tJZFNLJ8IAknCE23",
+        "LL Violão Pop 6/8": "https://youtu.be/IZwjw__8pUw?si=MlB63xE8R900ERMw",
+        "LL Forrozão Drums": "https://youtu.be/R-EOTJoi5bI?si=UcRkdrEWjk9iE4dU",
+        "LL Forró Romântico Drums v2": "https://youtu.be/yl484BqOu9w?si=SDv5syQUQKEBnYcW",
+        "LL Arrocha Drums v2": "https://youtu.be/ev5jrDTqB2Q?si=E0ZmxbFXY-0Eh2wT",
+        "LL Arraiá Drums": "https://youtu.be/ij0IMy274_A?si=BFDgociu8m9dFmon",
+        "LL Ukulele Prime": "https://youtu.be/Nz4ld0Bgd2k?si=SOfwzRx1ah7byiSl",
+        "LL Calypso Drums": "https://youtu.be/DyMQWGG-eww?si=akWcilP1UY6ZKvfx",
+        "LL Lambada Drums": "https://youtu.be/hSMQr-Jb978?si=RFGTX_6zH325DTPA",
+        "LL Drums Henry Freitas": "https://youtu.be/xTR6MuZM1lU?si=aZmLhWs7_Q3xeB9v",
+        "LL Drums Natanzinho Lima": "https://youtu.be/Knm8FoJ-z8M?si=E0wif0lIRbAt7IGN",
+        "LL Guitarra Arrocha v2 – Seresta": "https://youtu.be/uZHO0a083Oo?si=jHw5I-r7somFev9x",
+        "LL Bass Arrocha v2 – Seresta": "https://youtu.be/YnpQGQoL0i4?si=801jOc0ykr9aNH5c",
+        "LL Drums Arrocha Safadão": "https://youtu.be/pA9_SCV2bPs?si=WIXq-aKjMMPu2-KL",
+        "LL Baião Drums": "https://youtu.be/q3uNB_Fts_M?si=mSP9s7Uobw-49iDY",
+        "LL Drums Nattan Forró": "https://youtu.be/O0bMyQ9-reo?si=MFPWuXzaiekS-Ff6",
+        "LL Drums Desejo": "https://youtu.be/edbpb1HAJpM?si=J007U-ehQcdUPUYB",
+        "LL Drums Seresta do Rasta": "https://youtu.be/Jl7dWRJVg5k?si=L8gWlKQ5LQzFmAz7",
+        "LL Drums Leo Foguete": "https://www.youtube.com/watch?v=oIeRu7Le_iI", // Duplicado, mas mantido conforme lista
+        "LL Drums Marcynho Batidao": "https://youtu.be/8V3I303NcWU",
+        "LL Guitarra Pagodao v3": "https://www.youtube.com/watch?v=JmGsTXqFDU8",
+        "LL Bass Pagodao v2": "https://www.youtube.com/watch?v=DrEmHweA0aU",
+        "LL Keys Pagodao": "https://www.youtube.com/watch?v=8TE-0kQYAgE",
+        "LL Pacote Produção Nattan": "https://www.youtube.com/watch?v=-u2iGSJMYc8",
+        "LL Drums Guilherme Silva": "https://www.youtube.com/watch?v=egMYYporhgs",
+        "LL Drums Arrasta-Pé v2": "https://www.youtube.com/watch?v=B-VnCfYLIj8",
+        "LL Pacote Producao Arrasta-Pe (Completo)": "https://www.youtube.com/watch?v=B-VnCfYLIj8",
+        "LL Pacote Producao Arrasta-Pe (Acomp)": "https://www.youtube.com/watch?v=B-VnCfYLIj8",
+        "LL Drums Forrozin Os Feras": "https://www.youtube.com/watch?v=3ElrjIbD60U",
+        "LL Drums Flavio Pizada Quente": "https://www.youtube.com/watch?v=8iLazzVOBiA",
+        "LL Drums Thales Play": "https://www.youtube.com/watch?v=14pxiab-sYQ&amp;pp=0gcJCQMKAYcqIYzv",
+        "LL Violao Pop v3": "https://www.youtube.com/watch?v=k5tclbUGABc",
+        "LL Drums Safadao Vaquejada": "https://www.youtube.com/watch?v=D-JNlJU4VDQ",
+        "LL Drums Pablo": "https://www.youtube.com/watch?v=lb9FINdRGf4&amp;t=8s",
+        "LL Drums Claudio Ney e Juliana": "https://www.youtube.com/watch?v=J46vaIavi38",
+        "LL Pacote Produção Claudio Ney e Juliana": "https://www.youtube.com/watch?v=J46vaIavi38",
+        "LL Piano Romântico": "https://www.youtube.com/watch?v=JgX_3tA4pGw&amp;t=5s",
+        "LL Drums Rey Vaqueiro": "https://www.youtube.com/watch?v=geBo5YDSsH4",
+        "LL Drums Forró Boys": "https://www.youtube.com/watch?v=zjt75FJMJmM",
+        "LL Drums Luxúria": "https://www.youtube.com/watch?v=n8eJ6Q1Nq9A",
+        "LL Pacote Produção Arrocha": "https://www.youtube.com/watch?v=YIuHRLtGSjU",
+        "LL Pacote Produção Guilherme Silva": "https://www.youtube.com/watch?v=GF9Vlq8qOys",
+        "LL Guitarra Forró": "https://www.youtube.com/watch?v=76wm2WOucCs",
+		"LL Acordeon Forro": "https://raw.githubusercontent.com/ciliocavalcante-design/imagesll/refs/heads/main/Captura%20de%20tela%202025-08-08%20171415.png"
+    };
+
+    // Array samplesData atualizado com a lista completa fornecida anteriormente
+    // e agora com os links de vídeo preenchidos
+    const samplesData = [
+        {nome: "LL Guitarra Forró", valor: 70, video: "https://www.youtube.com/watch?v=76wm2WOucCs"},
+        {nome: "LL Pacote Produção Guilherme Silva", valor: 70, video: "https://www.youtube.com/watch?v=GF9Vlq8qOys"},
+        {nome: "LL Pacote Produção Arrocha", valor: 70, video: "https://www.youtube.com/watch?v=YIuHRLtGSjU"},
+        {nome: "LL Drums Luxúria", valor: 70, video: "https://www.youtube.com/watch?v=n8eJ6Q1Nq9A"},
+        {nome: "LL Drums Forró Boys", valor: 70, video: "https://www.youtube.com/watch?v=zjt75FJMJmM"},
+        {nome: "LL Drums Rey Vaqueiro", valor: 70, video: "https://www.youtube.com/watch?v=geBo5YDSsH4"},
+        {nome: "LL Piano Romântico", valor: 70, video: "https://www.youtube.com/watch?v=JgX_3tA4pGw&t=5s"},
+        {nome: "LL Acordeon Forro", valor: 70, video: "https://drive.google.com/file/d/1t5-yc4FcREU4z-m175sGIprgYBBwWnJ-/view?usp=sharing"}, // Não encontrado na lista de vídeos
+        {nome: "LL Pacote Produção Claudio Ney e Juliana", valor: 70, video: "https://www.youtube.com/watch?v=J46vaIavi38"},
+        {nome: "LL Drums Claudio Ney e Juliana", valor: 70, video: "https://www.youtube.com/watch?v=J46vaIavi38"},
+        {nome: "LL Drums Pablo", valor: 70, video: "https://www.youtube.com/watch?v=lb9FINdRGf4&t=8s"},
+        {nome: "LL Drums Safadao Vaquejada", valor: 70, video: "https://www.youtube.com/watch?v=D-JNlJU4VDQ"},
+        {nome: "LL Violao Pop v3", valor: 90, video: "https://www.youtube.com/watch?v=k5tclbUGABc"},
+        {nome: "LL Drums Thales Play", valor: 70, video: "https://www.youtube.com/watch?v=14pxiab-sYQ&pp=0gcJCQMKAYcqIYzv"},
+        {nome: "LL Drums Flavio Pizada Quente", valor: 70, video: "https://www.youtube.com/watch?v=8iLazzVOBiA"},
+        {nome: "LL Drums Forrozin Os Feras", valor: 70, video: "https://www.youtube.com/watch?v=3ElrjIbD60U"},
+        {nome: "LL Pacote Producao Arrasta-Pe (Completo)", valor: 70, video: "https://www.youtube.com/watch?v=B-VnCfYLIj8"},
+        {nome: "LL Pacote Producao Arrasta-Pe (Acomp)", valor: 70, video: "https://www.youtube.com/watch?v=B-VnCfYLIj8"},
+        {nome: "LL Drums Arrasta-Pé v2", valor: 70, video: "https://www.youtube.com/watch?v=B-VnCfYLIj8"},
+        {nome: "LL Drums Ronny Arrocha 2025", valor: 70, video: null}, // Não encontrado na lista de vídeos
+        {nome: "LL Drums Guilherme Silva", valor: 70, video: "https://www.youtube.com/watch?v=egMYYporhgs"},
+        {nome: "LL Pacote Produção Nattan", valor: 70, video: "https://www.youtube.com/watch?v=-u2iGSJMYc8"},
+        {nome: "LL Keys Pagodao", valor: 70, video: "https://www.youtube.com/watch?v=8TE-0kQYAgE"},
+        {nome: "LL Bass Pagodao v2", valor: 70, video: "https://www.youtube.com/watch?v=DrEmHweA0aU"},
+        {nome: "LL Guitarra Pagodao v3", valor: 80, video: "https://www.youtube.com/watch?v=JmGsTXqFDU8"},
+        {nome: "LL Drums Marcynho Batidao", valor: 70, video: "https://youtu.be/8V3I303NcWU"},
+        {nome: "LL Bass Forro Romantico", valor: 70, video: "https://youtu.be/L8wgsiVASb0?si=K_wrF7f1Y-wC6x5A"}, // Não encontrado na lista de vídeos
+        {nome: "LL Guitarra Batidao Cliente", valor: 70, video: null}, // Não encontrado na lista de vídeos
+        {nome: "LL Drums Leo Foguete", valor: 70, video: "https://www.youtube.com/watch?v=oIeRu7Le_iI"},
+        {nome: "LL Drums Seresta do Rasta", valor: 70, video: "https://youtu.be/Jl7dWRJVg5k?si=L8gWlKQ5LQzFmAz7"},
+        {nome: "LL Drums Desejo", valor: 70, video: "https://youtu.be/edbpb1HAJpM?si=J007U-ehQcdUPUYB"},
+        {nome: "LL Drums Nattan Forró", valor: 70, video: "https://youtu.be/O0bMyQ9-reo?si=MFPWuXzaiekS-Ff6"},
+        {nome: "LL Baião Drums", valor: 60, video: "https://youtu.be/q3uNB_Fts_M?si=mSP9s7Uobw-49iDY"},
+        {nome: "LL Drums Arrocha Safadão", valor: 70, video: "https://youtu.be/pA9_SCV2bPs?si=WIXq-aKjMMPu2-KL"},
+        {nome: "LL Bass Arrocha v2 – Seresta", valor: 70, video: "https://youtu.be/YnpQGQoL0i4?si=801jOc0ykr9aNH5c"},
+        {nome: "LL Guitarra Arrocha v2 – Seresta", valor: 70, video: "https://youtu.be/uZHO0a083Oo?si=jHw5I-r7somFev9x"},
+        {nome: "LL Drums Natanzinho Lima", valor: 70, video: "https://youtu.be/Knm8FoJ-z8M?si=E0wif0lIRbAt7IGN"},
+        {nome: "LL Drums Henry Freitas", valor: 60, video: "https://youtu.be/xTR6MuZM1lU?si=aZmLhWs7_Q3xeB9v"},
+        {nome: "LL Lambada Drums", valor: 60, video: "https://youtu.be/hSMQr-Jb978?si=RFGTX_6zH325DTPA"},
+        {nome: "LL Calypso Drums", valor: 60, video: "https://youtu.be/DyMQWGG-eww?si=akWcilP1UY6ZKvfx"},
+        {nome: "LL Ukulele Prime", valor: 70, video: "https://youtu.be/Nz4ld0Bgd2k?si=SOfwzRx1ah7byiSl"},
+        {nome: "LL Arraia Drums", valor: 60, video: "https://youtu.be/ij0IMy274_A?si=BFDgociu8m9dFmon"},
+        {nome: "LL Arrocha Drums v2", valor: 70, video: "https://youtu.be/ev5jrDTqB2Q?si=E0ZmxbFXY-0Eh2wT"},
+        {nome: "LL Forro Romantico Drums v2", valor: 70, video: "https://youtu.be/yl484BqOu9w?si=SDv5syQUQKEBnYcW"},
+        {nome: "LL Forrozao Drums v1.1", valor: 70, video: "https://www.youtube.com/watch?v=jEp5ZXmy0ik"}, // Não encontrado na lista de vídeos
+        {nome: "LL Forro Vaneirao Drums", valor: 70, video: "https://youtu.be/R-EOTJoi5bI?si=UcRkdrEWjk9iE4dU"}, // Corrigido para "LL Forrozão Drums"
+        {nome: "LL Violao Pop 6-8", valor: 80, video: "https://youtu.be/IZwjw__8pUw?si=MlB63xE8R900ERMw"}, // Corrigido para "LL Violão Pop 6/8"
+        {nome: "LL Strings", valor: 60, video: "https://youtu.be/V5zqi4J0sWc?si=tJZFNLJ8IAknCE23"},
+        {nome: "LL Acordeon Arrasta-Pe", valor: 70, video: "https://youtu.be/0gKTeQ0OJj0?si=kw9slO03p-DBL5K8"}, // Corrigido para "LL Acordeon Arrasta-Pé"
+        {nome: "LL Violao Pop v2", valor: 80, video: "https://youtu.be/jWlLr_bRMCM?si=agB7sYHkC7IdF7ml"},
+        {nome: "LL Bass Pagode", valor: 60, video: "https://youtu.be/Egn7F4w9ziQ?si=7PYeXL3GtEIbx5TR"},
+        {nome: "LL Bass Forrozao", valor: 60, video: "https://youtu.be/IEPn3MSkjJI?si=saLm4IQzeljGZNlb"},
+        {nome: "LL Acordeon Forrozao", valor: 60, video: "https://www.youtube.com/watch?v=SOjvoOpe6jA&list=RDSOjvoOpe6jA&start_radio=1"}, // Não encontrado na lista de vídeos
+        {nome: "LL Guitarra Forrozao", valor: 60, video: "https://youtu.be/czN2vM06eqM?si=1FzGrgYj5dMwz_U5"},
+        {nome: "LL Bass Pagodao", valor: 70, video: "https://youtu.be/u4ZRQfkwU8Q?si=6oqNIEVAAoZ5aw7"},
+        {nome: "LL Guitarra Pagodão v2", valor: 70, video: "https://youtu.be/oMSuwiTPuKw?si=VCkhC7WR0Oa6AsjF"},
+        {nome: "LL Pagodao Rythm v2", valor: 70, video: "https://youtu.be/h0BoTh6bUBQ?si=PsUqKrSxQ8yqDZ_V"},
+        {nome: "LL Guitarra Axe v2", valor: 60, video: "https://youtu.be/NU6ewsQQaaY?si=glnHb9jepQEISCvm"},
+        {nome: "LL Bass Axé", valor: 70, video: "https://youtu.be/bO-R5UNPgmY?si=4d5CmBYOEIrPnbBV"},
+        {nome: "LL Axé Rythm v2", valor: 80, video: "https://youtu.be/AUXgiprtqhA?si=XhG7ITJLwblC_7nF"},
+        {nome: "LL Cavaco Prime v2", valor: 70, video: "https://youtu.be/jN1uVwx0B88?si=LGZxUbdDudA6rrVr"},
+        {nome: "LL Acordeon Vaneira", valor: 60, video: "https://youtu.be/NQ6KcXt1OXc?si=gJi4RsHg7QH576bm"},
+        {nome: "LL Violao Pagode Samba", valor: 60, video: "https://youtu.be/dl40SSHThfg?si=yIaLKSAEyd5aKKQB"},
+        {nome: "LL Drums Manu Bahtidao", valor: 60, video: "https://youtu.be/FTg5oa1VHXU?si=ppkYm9OTD7LfU9iN"},
+        {nome: "LL Vaneira Drums", valor: 60, video: "https://youtu.be/0DVtxwdI8t0?si=e86hWI8i5BfqHtUO"},
+        {nome: "LL Violão Pop", valor: 60, video: "https://youtu.be/nuG8_3bNz8w?si=cOG3BcY11sIK0xEy"}, // Corrigido para "LL Violão Pop v1"
+        {nome: "LL Acordeon Arrocha", valor: 60, video: "https://youtu.be/mO0MaAN0Uqg?si=LBGc3mUFK-6uR2Bw"},
+        {nome: "LL Guitarra Calypso", valor: 60, video: "https://youtu.be/-dCxO11hSgc?si=lFhQdf2DKN2p91DH"},
+        {nome: "LL Drums Felipe Amorim", valor: 60, video: "https://youtu.be/iLb__-DAIO4?si=L7NsgoxhYTnqSev5"},
+        {nome: "LL Drums Zé Felipe", valor: 60, video: "https://youtu.be/d10c7aQLPgM?si=8O2SNR05q4-jhNvA"},
+        {nome: "LL Drums Mari Fernandez", valor: 60, video: "https://youtu.be/BwIcLysROfM?si=1wk7wUq1fccgpRva"},
+        {nome: "LL Bass Piseiro v2", valor: 60, video: "https://youtu.be/OcT97fnfB5M?si=L1JG-J7piPKxEdgq"},
+        {nome: "LL Guitarra Piseiro v3", valor: 80, video: "https://youtu.be/uJG_RXyoeP4?si=UquVv9MGLk8m6rcZ"},
+        {nome: "LL Pagode Drums e Percussion", valor: 60, video: "https://youtu.be/EHIwzcjL318?si=lI-5AlsOrgdU3BHn"},
+        {nome: "LL Violão Vaneira", valor: 60, video: "https://youtu.be/y50aOUzONBU?si=jzjUAtO2S5pVPZdf"},
+        {nome: "LL Iguinho e Lulinha Drums", valor: 60, video: "https://youtu.be/Sv2qJHQ0l-o?si=kjFKeJZelf_YbjBy"},
+        {nome: "LL Bass Arrasta-Pe", valor: 40, video: "https://youtu.be/0nPWAixsqhg?si=fob55xx8SAigoZiT"}, // Corrigido para "LL Bass Arrasta-Pé"
+        {nome: "LL Metais v3", valor: 80, video: "https://youtu.be/S0CqRq9a4TI?si=x_XKZCWPNa0P3__1"},
+        {nome: "LL Forro Romantico Drums", valor: 60, video: "https://youtu.be/9bKunDA2A88?si=FOKFisqdS6SUo8te"},
+        {nome: "LL Violão Arrocha 1.5 (Re-Edition)", valor: 60, video: "https://youtu.be/SB7_pE15rbw?si=jISOG-WijwKaN1JT"}, // Corrigido para "LL Violão Arrocha v1.5"
+        {nome: "LL Guitarra Arrasta-Pe", valor: 40, video: "https://youtu.be/gCT1ernB7DI?si=2StyUzrHWL86OCtd"}, // Corrigido para "LL Guitarra Arrasta-Pé"
+        {nome: "LL Arrasta-Pe Drums 1.5", valor: 60, video: "https://youtu.be/nke0JEdT8YA?si=pSY3Z1FoEqM6-z8N"}, // Corrigido para "LL Arrasta-Pé Drums v1.5"
+        {nome: "LL Metais 2.0", valor: 80, video: "https://youtu.be/RArd9zPafhQ?si=RxUhCsSuN9dj6kwk"}, // Corrigido para "LL Metais v2"
+        {nome: "LL Arrocha Drums Nadson", valor: 60, video: "https://www.youtube.com/watch?v=RPNK-7NEPKw&list=RDRPNK-7NEPKw&start_radio=1"}, // Não encontrado na lista de vídeos
+        {nome: "LL Arrocha Percussao", valor: 60, video: "https://youtu.be/sOzFZulOUHQ?si=AFt8hQGvev1l01iS"}, // Corrigido para "LL Arrocha Percussão"
+        {nome: "LL Cavaco Prime", valor: 60, video: "https://youtu.be/eIi__vQi14Q?si=-v1QjTikaAzMnNva"},
+        {nome: "LL Arrasta-Pe Drums", valor: 60, video: "https://www.youtube.com/watch?v=nAOiYoV1Y6U&list=RDnAOiYoV1Y6U&start_radio=1"}, // Não encontrado na lista de vídeos
+        {nome: "LL Violao Arrocha", valor: 60, video: null}, // Não encontrado na lista de vídeos
+        {nome: "LL Bass Arrocha", valor: 60, video: "https://youtu.be/7RV6pSg8waQ?si=bwoG2HBWWmoz64wL"},
+        {nome: "LL Guitarra Arrocha", valor: 60, video: "https://youtu.be/TUUs3lmy3Y0?si=XZPMvAvAMJP9_wvs"},
+        {nome: "LL Arrocha Drums", valor: 70, video: "https://youtu.be/1C1FO1tHJyI?si=Sy9HazkMIzN6B5-2"},
+        {nome: "LL Acordeon Piseiro 2.0", valor: 70, video: "https://youtu.be/v5kv8za6-90?si=F6QpoqKaEO-KHMO2"}, // Corrigido para "LL Acordeon Piseiro v2"
+        {nome: "LL Piseiro Drums Summer", valor: 70, video: "https://youtu.be/iasVX_hPkS4?si=zFEf5FSzaeUu3yoV"},
+        {nome: "LL Guitarra Piseiro 2.0", valor: 70, video: "https://www.youtube.com/watch?v=ElgxzAuavdY&list=RDElgxzAuavdY&start_radio=1"}, // Não encontrado na lista de vídeos
+        {nome: "LL Guitarra Pagodão", valor: 70, video: "https://www.youtube.com/watch?v=vv-1QI_RbKM&pp=ygUTTEwgR3VpdGFycmEgUGFnb2Rhb9IHCQkICgGHKiGM7w%3D%3D"}, // Não encontrado na lista de vídeos
+        {nome: "LL Pagodao Drums e Percussion", valor: 70, video: "https://youtu.be/EHIwzcjL318?si=lI-5AlsOrgdU3BHn"}, // Já preenchido acima, mas mantido para consistência
+        {nome: "LL Axé Drums", valor: 60, video: "https://www.youtube.com/watch?v=Yzg5m4ZJw1g&t=20s"}, // Não encontrado na lista de vídeos
+        {nome: "LL Guitarra Axé", valor: 60, video: "https://www.youtube.com/watch?v=NkO61zkS-C8&list=RDNkO61zkS-C8&start_radio=1"}, // Não encontrado na lista de vídeos
+        {nome: "LL Axé Percussão", valor: 60, video: "https://www.youtube.com/watch?v=9rbJgipJmV0&list=RD9rbJgipJmV0&start_radio=1"}, // Não encontrado na lista de vídeos
+        {nome: "LL Piseiro Drums 2.0", valor: 80, video: "https://www.youtube.com/watch?v=I0gpLLrcGe4&list=RDI0gpLLrcGe4&start_radio=1"}, // Não encontrado na lista de vídeos
+        {nome: "LL Piseiro Drums 1.5", valor: 80, video: "https://youtu.be/6z0aRqURc4w?si=ZAI68b_qdnK2m7LA"},
+        {nome: "LL Pe de Serra Drums e Perc", valor: 60, video: "https://youtu.be/LAh_N1dgdRI?si=kq3wqwhPs1NU1GKO"}, // Corrigido para "LL Pé de Serra Drums"
+        {nome: "LL Acordeon Pé-de-Serra", valor: 60, video: "https://youtu.be/3h8xR4OmtH8?si=HDDBViN52uia_s6e"},
+        {nome: "LL Guitarra Bregadeira", valor: 60, video: "https://youtu.be/93LWdjfAIfg?si=oIe6KFojIkQZO8XR"},
+        {nome: "LL Bregadeira Drums", valor: 60, video: "https://youtu.be/IJNOLjdF_8o?si=BN-dy24wlx2L5giT"},
+        {nome: "LL Percussao Piseiro", valor: 60, video: "https://youtu.be/I2Tu68topUU?si=IfW2expvkG41K0Po"},
+        {nome: "LL Piseiro Bass", valor: 60, video: "https://youtu.be/5K1IOqGaP6g?si=PYO9vBxuCGhiZkbR"}, // Corrigido para "LL Bass Piseiro v1"
+        {nome: "LL Guitarra Piseiro", valor: 60, video: "https://youtu.be/rUvw79orXZg?si=q4JE8l1OrC4MuXQy"}, // Corrigido para "LL Guitarra Piseiro v1"
+        {nome: "LL Acordeon Piseiro", valor: 60, video: "https://youtu.be/wzNRhtxSIx0?si=yjudaYtzgVWlj7r6"},
+        {nome: "LL WS Drums", valor: 60, video: "https://youtu.be/8onKDOVKCxE?si=HcoB1ZkR_9_UjRS5"},
+        {nome: "LL Piseiro Drums v1", valor: 60, video: "https://youtu.be/OnQKHjpjvaQ?si=hbo9pwX4DWucZPSb"},
+        {nome: "LL Metais", valor: 60, video: "https://youtu.be/KuUTx8NzAr4?si=lbaaAjGnjUO9IpJc"},
+        {nome: "LL Sax v1.5", valor: 60, video: "https://youtu.be/YotFGV5IQl8?si=4ahVjkVZTQeqbfmK"}
+    ];
+    let selectedSamples = new Set();
+    const thumbnailCache = new Map(); // Cache para armazenar URLs de thumbnails já verificadas
+
+    function getYoutubeVideoId(url) {
+        if (!url) return null;
+        const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const match = url.match(regExp);
+        return (match && match[1].length === 11) ? match[1] : null;
+    }
+
+    function getYoutubeThumbnailUrl(videoId, quality = 'maxresdefault') {
+        if (!videoId) return '';
+        return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+    }
+
+    function openYoutubeVideo(url) {
+        if (url) {
+            window.open(url, '_blank');
+        }
+    }
+
+    const FALLBACK_THUMBNAIL_URL = 'https://raw.githubusercontent.com/ciliocavalcante-design/imagesll/main/placeholder-audio.png';
+
+    async function getValidThumbnailUrl(videoUrl) {
+        if (thumbnailCache.has(videoUrl)) {
+            return thumbnailCache.get(videoUrl); // Retorna do cache se já verificada
+        }
+        const videoId = getYoutubeVideoId(videoUrl);
+        if (!videoId) {
+            thumbnailCache.set(videoUrl, FALLBACK_THUMBNAIL_URL);
+            return FALLBACK_THUMBNAIL_URL;
+        }
+        const qualities = ['maxresdefault', 'hqdefault', 'sddefault', 'mqdefault'];
+        for (const quality of qualities) {
+            const url = getYoutubeThumbnailUrl(videoId, quality);
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                if (response.ok) {
+                    thumbnailCache.set(videoUrl, url); // Armazena no cache
+                    return url;
+                }
+            } catch (error) {
+                // Ignora erros e tenta a próxima qualidade
+            }
+        }
+        thumbnailCache.set(videoUrl, FALLBACK_THUMBNAIL_URL); // Armazena o fallback no cache
+        return FALLBACK_THUMBNAIL_URL;
+    }
+
+    // Função para criar um único card HTML
+    async function createSampleCard(sample, globalIndex) {
+        const isSelected = selectedSamples.has(globalIndex);
+        const card = document.createElement('div');
+        card.className = `sample-card ${isSelected ? 'selected' : ''}`;
+        card.dataset.index = globalIndex; // Adiciona o índice como um atributo de dado
+        const thumbnailUrl = await getValidThumbnailUrl(sample.video);
+        const thumbnailContent = `
+            <img src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy">
+            <span class="play-icon">▶️</span>
+        `;
+        card.innerHTML = `
+            <div class="video-thumbnail ${sample.video ? '' : 'no-video'}" onclick="${sample.video ? `openYoutubeVideo('${sample.video}')` : ''}">
+                ${thumbnailContent}
+            </div>
+            <div class="card-content">
+                <div class="sample-name">${sample.nome}</div>
+                <div class="sample-price">R$ ${sample.valor.toFixed(2)}</div>
+                <div class="card-actions">
+                    <button class="btn-select ${isSelected ? 'remove' : 'add'}" data-index="${globalIndex}">
+                        ${isSelected ? '❌ Remover' : '✅ Adicionar'}
+                    </button>
+                </div>
+            </div>
+        `;
+        // Adiciona o event listener diretamente ao botão dentro do card
+        card.querySelector('.btn-select').addEventListener('click', (event) => {
+            const index = parseInt(event.target.dataset.index);
+            toggleSample(index, card); // Passa o elemento do card
+        });
+        return card;
+    }
+
+    async function renderCatalog(filter = 'all', searchTerm = '') {
+        const grid = document.getElementById('catalogGrid');
+        grid.innerHTML = ''; // Limpa o grid antes de renderizar
+
+        let filtered = samplesData;
+
+        const processedSearchTerm = normalizeForComparison(searchTerm);
+
+        if (filter !== 'all') {
+            filtered = samplesData.filter(s => normalizeForComparison(s.nome).includes(normalizeForComparison(filter)));
+        }
+
+        if (searchTerm) {
+            filtered = filtered.filter(s => {
+                const processedSampleName = normalizeForComparison(s.nome);
+                return processedSampleName.includes(processedSearchTerm);
+            });
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="no-results">😔 Nenhum sample encontrado</div>';
+            return;
+        }
+
+        for (const sample of filtered) {
+            const globalIndex = samplesData.indexOf(sample);
+            const card = await createSampleCard(sample, globalIndex);
+            grid.appendChild(card);
+            if (selectedSamples.has(globalIndex)) {
+                card.classList.add('selected');
+                card.querySelector('.btn-select').classList.remove('add');
+                card.querySelector('.btn-select').classList.add('remove');
+                card.querySelector('.btn-select').textContent = '❌ Remover';
+            }
+        }
+    }
+
+    function toggleSample(index, cardElement) {
+        if (selectedSamples.has(index)) {
+            selectedSamples.delete(index);
+            cardElement.classList.remove('selected');
+            cardElement.querySelector('.btn-select').classList.remove('remove');
+            cardElement.querySelector('.btn-select').classList.add('add');
+            cardElement.querySelector('.btn-select').textContent = '✅ Adicionar';
+        } else {
+            selectedSamples.add(index);
+            cardElement.classList.add('selected');
+            cardElement.querySelector('.btn-select').classList.remove('add');
+            cardElement.querySelector('.btn-select').classList.add('remove');
+            cardElement.querySelector('.btn-select').textContent = '❌ Remover';
+        }
+        updateCart(); // Atualiza o carrinho imediatamente
+    }
+
+    function updateCart() {
+        const cartSummary = document.getElementById('cartSummary');
+        const cartInfo = document.getElementById('cartInfo');
+        const cartTotal = document.getElementById('cartTotal');
+        const count = selectedSamples.size;
+        let total = 0;
+        selectedSamples.forEach(index => {
+            total += samplesData[index].valor;
+        });
+
+        if (count > 0) {
+            cartSummary.style.display = 'flex';
+            cartInfo.textContent = `${count} sample${count > 1 ? 's' : ''} selecionado${count > 1 ? 's' : ''}`;
+            cartTotal.textContent = `R$ ${total.toFixed(2)}`;
+        } else {
+            cartSummary.style.display = 'none';
+        }
+    }
+
+    function finalizarSelecao() {
+        if (selectedSamples.size === 0) {
+            alert('⚠️ Selecione ao menos um sample!');
+            return;
+        }
+        let mensagem = '🎹 LL SAMPLES - MINHA SELECAO 🎹\n\n'; // Título sem acento
+        let total = 0;
+        selectedSamples.forEach(index => {
+            const s = samplesData[index];
+            mensagem += `✅ ${removerAcentos(s.nome)} - R$ ${s.valor.toFixed(2)}\n`;
+            total += s.valor;
+        });
+        mensagem += `\n💰 TOTAL: R$ ${total.toFixed(2)}\n\n`;
+        mensagem += `📲 Gostaria de fechar o pedido!\n`;
+        mensagem += `WhatsApp: [seu numero]`; // Lembre-se de substituir [seu número] pelo seu número de WhatsApp e remover acentos se desejar
+
+        const textarea = document.createElement('textarea');
+        textarea.value = mensagem;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        alert(`✅ Seleção copiada!\n\n${selectedSamples.size} samples no valor de R$ ${total.toFixed(2)}\n\nEnvie para o WhatsApp!`);
+    }
+
+    function copiarNomesSamples() {
+        if (selectedSamples.size === 0) {
+            alert('⚠️ Selecione ao menos um sample para copiar os nomes!');
+            return;
+        }
+        let nomes = [];
+        selectedSamples.forEach(index => {
+            nomes.push(removerAcentos(samplesData[index].nome));
+        });
+        const mensagemNomes = nomes.join('\n');
+
+        const textarea = document.createElement('textarea');
+        textarea.value = mensagemNomes;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        alert(`✅ Nomes dos samples copiados!\n\n${selectedSamples.size} nomes copiados para a área de transferência.`);
+    }
+
+    function selectAllSamples() {
+        selectedSamples.clear();
+        const visibleSampleCards = document.querySelectorAll('.sample-card');
+        visibleSampleCards.forEach(cardElement => {
+            const index = parseInt(cardElement.dataset.index);
+            selectedSamples.add(index);
+            cardElement.classList.add('selected');
+            const btn = cardElement.querySelector('.btn-select');
+            btn.classList.remove('add');
+            btn.classList.add('remove');
+            btn.textContent = '❌ Remover';
+        });
+        updateCart();
+    }
+
+    function clearAllSamples() {
+        selectedSamples.clear();
+        document.querySelectorAll('.sample-card').forEach(cardElement => {
+            cardElement.classList.remove('selected');
+            const btn = cardElement.querySelector('.btn-select');
+            btn.classList.remove('remove');
+            btn.classList.add('add');
+            btn.textContent = '✅ Adicionar';
+        });
+        updateCart();
+    }
+
+    // Event Listeners
+    let currentFilter = 'all';
+    document.querySelectorAll('.tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            renderCatalog(currentFilter, document.getElementById('searchInput').value);
+        });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+        renderCatalog(currentFilter, this.value);
+    });
+
+    // Renderiza catálogo inicial
+    renderCatalog();
+</script>
+</body>
+</html>
