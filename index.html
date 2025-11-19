@@ -306,22 +306,58 @@
         font-size: 20px;
     }
 
-    @media (max-width: 768px) {
-        .catalog-grid {
-            grid-template-columns: 1fr;
-        }
-        .header h1 {
-            font-size: 2em;
-        }
-        .cart-summary {
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-        }
-        .cart-actions-group {
-            justify-content: center;
-        }
+@media (max-width: 768px) {
+    .catalog-grid {
+        grid-template-columns: 1fr;
     }
+
+    .header h1 {
+        font-size: 1.6em;
+    }
+
+    /* Deixar o resumo bem compacto no celular */
+    .cart-summary {
+        position: static;          /* tira o sticky pra não "grudar" e ocupar muito */
+        padding: 12px 15px;        /* menos espaço interno */
+        margin-bottom: 15px;
+        gap: 8px;
+        border-radius: 12px;
+    }
+
+    .cart-info {
+        font-size: 14px;
+    }
+
+    .cart-total {
+        font-size: 18px;
+    }
+
+    /* Colocar os botões em 2 colunas (ou todos menores) */
+    .cart-actions-group {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-finalizar, .btn-copy-names, .btn-select-all, .btn-clear-all {
+        padding: 8px 10px;     /* botões mais baixos */
+        font-size: 13px;       /* fonte menor */
+        border-radius: 8px;
+        width: 100%;           /* cada botão ocupa a célula inteira da grid */
+    }
+
+    /* Se quiser ainda mais compacto, pode esconder os textos e deixar só ícones. Exemplo:
+    .btn-finalizar span.text,
+    .btn-copy-names span.text,
+    .btn-select-all span.text,
+    .btn-clear-all span.text {
+        display: none;
+    }
+    */
+}
+
 
     .badge {
         display: inline-block;
